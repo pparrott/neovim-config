@@ -33,10 +33,16 @@ return {
         opts = function()
             return require "config.mason"
         end,
+        lazy = false,
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = { "williamboman/mason.nvim" },
+        lazy = false,
     },
     {
         "neovim/nvim-lspconfig",
-        dependencies = { "saghen/blink.cmp", "nvim-telescope/telescope.nvim" },
+        dependencies = { "williamboman/mason-lspconfig.nvim", "saghen/blink.cmp", "nvim-telescope/telescope.nvim" },
         config = function()
             require "config.lspconfig"
         end,

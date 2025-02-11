@@ -2,8 +2,11 @@ local map = vim.keymap.set
 
 local lspconfig = require "lspconfig"
 local capabilities = require("blink.cmp").get_lsp_capabilities()
+local servers = { "gopls", "yamlls", "pylsp" }
 
-local servers = { "gopls" }
+local mslp = require("mason-lspconfig").setup {
+    ensure_installed = servers,
+}
 
 local lsp_reference = function() 
     require("telescope.builtin").lsp_references()
