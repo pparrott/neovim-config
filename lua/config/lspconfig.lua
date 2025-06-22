@@ -2,10 +2,25 @@ local map = vim.keymap.set
 
 local lspconfig = require "lspconfig"
 local capabilities = require("blink.cmp").get_lsp_capabilities()
-local servers = { "gopls", "yamlls", "pylsp" }
+local servers = { "gopls", "yamlls", "pylsp", "rust_analyzer", "cssls" }
+
+local server_settings = {
+    gopls = {
+        gofumpt = true,  -- Use gofumpt for stricter formatting
+        staticcheck = true,  -- Enable additional static checks
+        analyses = {
+            unusedparams = true,  -- Enable analysis for unused parameters
+        },
+        experimentalPostfixCompletions = true,
+        usePlaceholders = true,
+        completeUnimported = true,
+        semanticTokens = true,
+    },
+}
 
 local mslp = require("mason-lspconfig").setup {
     ensure_installed = servers,
+    automatic_enable = false,
 }
 
 local lsp_reference = function() 
@@ -13,6 +28,8 @@ local lsp_reference = function()
 end
 
 local on_attach = function(client, bufnr)
+    print("LSP attached:", client.name)
+
     local function opts(desc)
         return { buffer = bufnr, desc = "LSP " .. desc }
     end
@@ -56,18 +73,6 @@ for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup {
         on_attach = on_attach,
         capabilities = capabilities,
-        settings = {
-            gopls = {
-                gofumpt = true,  -- Use gofumpt for stricter formatting
-                staticcheck = true,  -- Enable additional static checks
-                analyses = {
-                    unusedparams = true,  -- Enable analysis for unused parameters
-                },
-                experimentalPostfixCompletions = true,
-                usePlaceholders = true,
-                completeUnimported = true,
-                semanticTokens = true,
-            },
-        },
+        settings = server_settings[lsp],
     }
 end
