@@ -1,8 +1,20 @@
 local map = vim.keymap.set
 
-local lspconfig = require "lspconfig"
+-- local lspconfig = require("lspconfig")
 local capabilities = require("blink.cmp").get_lsp_capabilities()
 local servers = { "gopls", "yamlls", "pylsp", "rust_analyzer", "cssls" }
+
+-- Define global LSP settings for all servers
+vim.lsp.config("*", {
+  capabilities = capabilities,
+  flags = {
+    debounce_text_changes = 150,
+  },
+  -- You can add other global settings here, like on_attach or handlers
+})
+
+-- Initialize lspconfig to load server configurations
+require("lspconfig")
 
 local server_settings = {
     gopls = {
@@ -68,11 +80,29 @@ local on_attach = function(client, bufnr)
 end
 
 
-for _, lsp in ipairs(servers) do
-    
-    lspconfig[lsp].setup {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = server_settings[lsp],
-    }
+-- for _, lsp in ipairs(servers) do
+--
+--     lspconfig[lsp].setup {
+--         on_attach = on_attach,
+--         capabilities = capabilities,
+--         settings = server_settings[lsp],
+--     }
+-- end
+
+-- Enable the servers
+vim.lsp.enable(servers)
+
+-- Optionally, set up server-specific configurations
+-- This is only needed if you want to override global settings for specific servers
+for _, server_name in ipairs(servers) do
+  if server_settings[server_name] then
+    vim.lsp.config(server_name, {
+      settings = server_settings[server_name],
+      on_attach = on_attach,
+    })
+  else
+    vim.lsp.config(server_name, {
+      on_attach = on_attach,
+    })
+  end
 end
