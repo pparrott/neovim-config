@@ -100,4 +100,22 @@ return {
             require("nvim-autopairs").setup(opts)
         end,
     },
+    -- http
+    {
+        "mistweaverco/kulala.nvim",
+        keys = {
+            { "<leader>Rs", desc = "Send request" },
+            { "<leader>Ra", desc = "Send all requests" },
+            { "<leader>Rb", desc = "Open scratchpad" },
+        },
+        ft = {"http", "rest"},
+        opts = {
+            global_keymaps = false,
+            global_keymaps_prefix = "<leader>R",
+            kulala_keymaps_prefix = "",
+        },
+        config = function(_, opts)
+            require("config.kulala")(opts)
+        end,
+    },
 }
